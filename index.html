@@ -30,25 +30,40 @@
             margin-bottom: 20px;
         }
 
-        /* --- BARRA DI RICERCA CON "X" --- */
+        /* --- BARRA DI RICERCA E FILTRI --- */
+        .controls-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
         .search-wrapper-outer {
             position: relative;
-            max-width: 400px;
-            margin: 0 auto 20px;
+            max-width: 450px; /* Leggermente più largo per far leggere bene l'esempio */
+            width: 100%;
         }
 
         #chapterSearch {
             background-color: #2a1400;
             border: 2px solid #e5c27a;
             border-radius: 25px;
-            padding: 12px 45px 12px 15px; /* Spazio a destra per la X */
+            padding: 12px 45px 12px 15px;
             color: #e5c27a;
-            font-size: 1em;
+            font-size: 0.95em;
             width: 100%;
             outline: none;
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
             text-align: center;
             box-sizing: border-box;
+        }
+
+        /* Colore del testo suggerito (placeholder) */
+        #chapterSearch::placeholder {
+            color: #a38b5d;
+            opacity: 0.7;
+            font-style: italic;
         }
 
         .clear-search {
@@ -59,10 +74,41 @@
             color: #e5c27a;
             font-size: 20px;
             cursor: pointer;
-            display: none; /* Nascondi di base */
-            font-family: Arial, sans-serif;
-            font-weight: bold;
-            text-shadow: 0 0 5px #000;
+            display: none;
+        }
+
+        .buttons-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            background: #4a2b0f;
+            color: #e5c27a;
+            border: 1px solid #e5c27a;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 0.9em;
+        }
+        .filter-btn.active {
+            background: #e5c27a;
+            color: #2a1400;
+        }
+
+        .delete-btn {
+            background: #601a1a;
+            color: #ffb3b3;
+            border: 1px solid #ff4d4d;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            display: none;
+            transition: 0.3s;
         }
 
         /* --- LA SCAFFALATURA --- */
@@ -82,7 +128,7 @@
             background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
         }
 
-        /* --- STILE ETZ CHAYIM CON APERTURA DINAMICA --- */
+        /* --- STILE ETZ CHAYIM --- */
         .scroll-item {
             position: relative;
             height: 140px;
@@ -95,101 +141,64 @@
             z-index: 1;
         }
 
-        /* Effetto apertura al passaggio del mouse o tocco */
-        .scroll-item:hover, .scroll-item:active {
-            transform: scale(1.1);
-            z-index: 10;
+        .scroll-item:hover { transform: scale(1.1); z-index: 10; }
+
+        .bookmark-icon {
+            position: absolute;
+            top: 0; right: 10px;
+            color: #888; font-size: 1.4em;
+            transition: 0.3s; z-index: 20;
+            text-shadow: 1px 1px 3px #000;
         }
+        .bookmark-icon.active { color: #ffd700; }
 
         .pole {
-            width: 10px;
-            height: 100%;
+            width: 10px; height: 100%;
             background: linear-gradient(to right, #2a1400, #8b4513, #5c3a21, #2a1400);
-            position: relative;
-            flex-shrink: 0;
-            z-index: 3;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; flex-shrink: 0; z-index: 3;
         }
 
         .pole::before, .pole::after {
-            content: '';
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
+            content: ''; position: absolute;
+            width: 18px; height: 18px; border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, #b37a4c, #2a1400);
-            left: 50%;
-            transform: translateX(-50%);
+            left: 50%; transform: translateX(-50%);
         }
         .pole::before { top: -8px; }
         .pole::after { bottom: -8px; }
 
         .scroll-wrapper {
-            min-width: 50px; 
-            height: 75%;
+            min-width: 50px; height: 75%;
             background-color: #e3d3b8;
             background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png');
             box-shadow: inset 8px 0 8px -5px rgba(0,0,0,0.4), inset -8px 0 8px -5px rgba(0,0,0,0.4);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-top: 1px solid #5c3a21;
-            border-bottom: 1px solid #5c3a21;
-            margin: 0 -2px;
-            padding: 0 12px;
-            z-index: 2;
-            transition: all 0.4s ease; /* Transizione fluida apertura */
+            display: flex; justify-content: center; align-items: center;
+            border-top: 1px solid #5c3a21; border-bottom: 1px solid #5c3a21;
+            margin: 0 -2px; padding: 0 12px; z-index: 2;
+            transition: all 0.4s ease;
         }
 
-        /* LOGICA DI APERTURA: i pali si allontanano e la carta si espande */
-        .scroll-item:hover .scroll-wrapper {
-            min-width: 90px;
-            padding: 0 15px;
-        }
+        .scroll-item:hover .scroll-wrapper { min-width: 90px; }
+        .scroll-number { font-size: 0.85em; font-weight: bold; color: #3d1f00; font-family: 'Times New Roman', serif; }
 
-        .scroll-number {
-            font-size: 0.85em;
-            font-weight: bold;
-            color: #3d1f00;
-            font-family: 'Times New Roman', serif;
-            white-space: nowrap;
-            text-align: center;
-        }
-
-        /* --- FINESTRA DI LETTURA --- */
+        /* --- MODALE --- */
         .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center;
         }
         .modal-content {
-            background-color: #fdfbf7;
-            background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png');
-            width: 95%;
-            height: 90vh;
-            padding: 25px;
-            position: relative;
-            box-shadow: 0 0 40px #000;
-            border: 2px solid #d4af37;
-            overflow-y: auto;
-            box-sizing: border-box;
+            background-color: #fdfbf7; background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png');
+            width: 95%; height: 90vh; padding: 25px; position: relative;
+            box-shadow: 0 0 40px #000; border: 2px solid #d4af37;
+            overflow-y: auto; box-sizing: border-box;
         }
         .close-btn { position: absolute; top: 10px; right: 20px; font-size: 40px; color: #8b0000; cursor: pointer; z-index: 10; }
         .chapter-title { color: #8b0000; text-align: center; font-size: 1.5em; border-bottom: 1px solid #d4af37; padding-bottom: 15px; margin-bottom: 20px; margin-top: 20px;}
         .chapter-text { font-size: 1.15em; line-height: 1.7; text-align: justify; color: #222; }
 
         #originalLink {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 12px 25px;
-            color: #d4af37;
-            border: 1px solid #d4af37;
-            text-decoration: none;
-            font-style: italic;
+            display: inline-block; margin-top: 30px; padding: 12px 25px;
+            color: #d4af37; border: 1px solid #d4af37; text-decoration: none; font-style: italic;
         }
 
         @media (min-width: 768px) {
@@ -197,7 +206,6 @@
             .scroll-item { height: 170px; }
             .library-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); padding: 40px; }
             .modal-content { width: 85%; padding: 50px; }
-            .scroll-number { font-size: 1em; }
             .scroll-item:hover .scroll-wrapper { min-width: 110px; }
         }
     </style>
@@ -205,10 +213,16 @@
 <body>
 
     <div class="header-section">
-        <h1>L'Evangelo</h1>
-        <div class="search-wrapper-outer">
-            <input type="text" id="chapterSearch" placeholder="Cerca nr. capitolo" onkeyup="filterChapters()">
-            <span class="clear-search" id="clearBtn" onclick="clearSearch()">&times;</span>
+        <h1>L'Evangelo come mi è stato rivelato</h1>
+        <div class="controls-container">
+            <div class="search-wrapper-outer">
+                <input type="text" id="chapterSearch" placeholder="Cerca capitolo (es. 42 oppure XLII)" onkeyup="filterChapters()">
+                <span class="clear-search" id="clearBtn" onclick="clearSearch()">&times;</span>
+            </div>
+            <div class="buttons-row">
+                <button class="filter-btn" id="favFilter" onclick="toggleFavorites()">★ Mostra Segnalibri</button>
+                <button class="delete-btn" id="deleteAllBtn" onclick="clearAllBookmarks()">Elimina Tutti</button>
+            </div>
         </div>
     </div>
 
@@ -227,6 +241,9 @@
 
     <script src="archivio.js"></script>
     <script>
+        let showOnlyFavs = false;
+        let bookmarks = JSON.parse(localStorage.getItem('valtorta_bookmarks')) || [];
+
         function toRoman(num) {
             const roman = { M: 1000, CM: 900, D: 500, CD: 400, C: 100, XC: 90, L: 50, XL: 40, X: 10, IX: 9, V: 5, IV: 4, I: 1 };
             let str = '';
@@ -234,31 +251,74 @@
             return str;
         }
 
-        const gridContainer = document.getElementById('gridContainer');
-        for (let i = 1; i <= 652; i++) {
-            const scroll = document.createElement('div');
-            scroll.className = 'scroll-item';
-            const r = toRoman(i);
-            scroll.setAttribute('data-number', i);
-            scroll.setAttribute('data-roman', r);
-            scroll.innerHTML = `<div class="pole"></div><div class="scroll-wrapper"><span class="scroll-number">${r}</span></div><div class="pole"></div>`;
-            scroll.onclick = () => openChapter(i);
-            gridContainer.appendChild(scroll);
+        function createGrid() {
+            const gridContainer = document.getElementById('gridContainer');
+            gridContainer.innerHTML = "";
+            for (let i = 1; i <= 652; i++) {
+                const isBookmarked = bookmarks.includes(i);
+                const scroll = document.createElement('div');
+                scroll.className = 'scroll-item';
+                const r = toRoman(i);
+                scroll.setAttribute('data-number', i);
+                scroll.setAttribute('data-roman', r);
+                
+                scroll.innerHTML = `
+                    <div class="bookmark-icon ${isBookmarked ? 'active' : ''}" onclick="toggleBookmark(event, ${i})">★</div>
+                    <div class="pole"></div>
+                    <div class="scroll-wrapper"><span class="scroll-number">${r}</span></div>
+                    <div class="pole"></div>
+                `;
+                
+                scroll.onclick = (e) => {
+                    if(!e.target.classList.contains('bookmark-icon')) openChapter(i);
+                };
+                gridContainer.appendChild(scroll);
+            }
+            filterChapters();
+        }
+
+        function toggleBookmark(event, n) {
+            event.stopPropagation();
+            const idx = bookmarks.indexOf(n);
+            if (idx > -1) { bookmarks.splice(idx, 1); } else { bookmarks.push(n); }
+            saveAndRefresh();
+        }
+
+        function clearAllBookmarks() {
+            if(bookmarks.length === 0) return;
+            if(confirm("Sei sicuro di voler eliminare TUTTI i segnalibri salvati?")) {
+                bookmarks = [];
+                saveAndRefresh();
+                if(showOnlyFavs) toggleFavorites();
+            }
+        }
+
+        function saveAndRefresh() {
+            localStorage.setItem('valtorta_bookmarks', JSON.stringify(bookmarks));
+            createGrid();
+        }
+
+        function toggleFavorites() {
+            showOnlyFavs = !showOnlyFavs;
+            const btn = document.getElementById('favFilter');
+            const delBtn = document.getElementById('deleteAllBtn');
+            btn.innerText = showOnlyFavs ? "Tutti i Capitoli" : "★ Mostra Segnalibri";
+            btn.classList.toggle('active');
+            delBtn.style.display = (showOnlyFavs && bookmarks.length > 0) ? "block" : "none";
+            filterChapters();
         }
 
         function filterChapters() {
-            const input = document.getElementById('chapterSearch');
-            const btn = document.getElementById('clearBtn');
-            const val = input.value.trim().toUpperCase();
-            
-            // Mostra/nascondi tasto X
-            btn.style.display = (val.length > 0) ? "block" : "none";
-
+            const val = document.getElementById('chapterSearch').value.trim().toUpperCase();
+            document.getElementById('clearBtn').style.display = (val.length > 0) ? "block" : "none";
             const items = document.getElementsByClassName('scroll-item');
+            
             for (let i = 0; i < items.length; i++) {
-                const a = items[i].getAttribute('data-number');
+                const n = parseInt(items[i].getAttribute('data-number'));
                 const r = items[i].getAttribute('data-roman');
-                items[i].style.display = (val === "" || a === val || r === val) ? "flex" : "none";
+                const matchesSearch = (val === "" || n.toString() === val || r === val);
+                const matchesFav = (!showOnlyFavs || bookmarks.includes(n));
+                items[i].style.display = (matchesSearch && matchesFav) ? "flex" : "none";
             }
         }
 
@@ -271,7 +331,7 @@
         function openChapter(n) {
             const capitolo = (typeof archivioCapitoli !== 'undefined') ? archivioCapitoli[n] : null;
             document.getElementById('modalTitle').innerText = toRoman(n) + (capitolo ? ". " + capitolo.titolo : "");
-            document.getElementById('modalText').innerHTML = capitolo ? capitolo.testo : "Contenuto in caricamento...";
+            document.getElementById('modalText').innerHTML = capitolo ? capitolo.testo : "Contenuto in fase di caricamento...";
             const link = document.getElementById('originalLink');
             if(capitolo && capitolo.link) { link.href = capitolo.link; link.style.display="inline-block"; } else { link.style.display="none"; }
             document.getElementById('readerModal').style.display = 'flex';
@@ -279,6 +339,8 @@
 
         function closeModal() { document.getElementById('readerModal').style.display = 'none'; }
         window.onclick = (e) => { if (e.target.id == 'readerModal') closeModal(); }
+
+        createGrid();
     </script>
 </body>
 </html>
