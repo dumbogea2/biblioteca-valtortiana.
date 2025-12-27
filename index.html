@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Valtortiana Online</title>
+    <style>
+        /* --- AMBIENTAZIONE GENERALE --- */
+        body {
+            background-color: #110a07; 
+            background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+            color: #333;
+            font-family: 'Garamond', 'Georgia', serif;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-top: 20px;
+        }
+
+        h1 {
+            color: #e5c27a;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 10px #000;
+            font-variant: small-caps;
+            margin-bottom: 20px;
+        }
+
+        /* --- BARRA DI RICERCA RESPONSIVE --- */
+        .search-container {
+            margin-bottom: 20px;
+            padding: 0 15px;
+        }
+
+        #chapterSearch {
+            background-color: #2a1400;
+            border: 2px solid #e5c27a;
+            border-radius: 25px;
+            padding: 12px;
+            color: #e5c27a;
+            font-size: 1em;
+            width: 100%;
+            max-width: 400px;
+            outline: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            text-align: center;
+        }
+
+        /* --- LA SCAFFALATURA RESPONSIVE --- */
+        .library-container-frame {
+            max-width: 1200px;
+            margin: 0 auto;
+            border: 10px solid #2a1400;
+            box-shadow: 0 0 30px rgba(0,0,0,0.9);
+            background-color: #1a0f0a;
+        }
+
+        .library-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+            gap: 25px 10px;
+            padding: 20px;
+            background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
+        }
+
+        /* --- STILE ETZ CHAYIM --- */
+        .scroll-item {
+            position: relative;
+            height: 140px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.7));
+            gap: 0;
+        }
+
+        .scroll-item:hover {
+            gap: 8px;
+            transform: scale(1.05);
+        }
+
+        .pole {
+            width: 10px;
+            height: 100%;
+            background: linear-gradient(to right, #2a1400, #8b4513, #5c3a21, #2a1400);
+            position: relative;
+        }
+
+        .pole::before, .pole::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #b37a4c, #2a1400);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .pole::before { top: -8px; }
+        .pole::after { bottom: -8px; }
+
+        .scroll-wrapper {
+            flex-grow: 0;
+            width: 35px;
+            height: 70%;
+            background-color: #e3d3b8;
+            background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png');
+            box-shadow: inset 5px 0 7px -3px rgba(0,0,0,0.5), inset -5px 0 7px -3px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top: 1px solid #5c3a21;
+            border-bottom: 1px solid #5c3a21;
+            transition: all 0.3s;
+            overflow: hidden;
+        }
+
+        .scroll-number {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #3d1f00;
+            font-family: serif;
+        }
+
+        /* --- FINESTRA DI LETTURA RESPONSIVE --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fdfbf7;
+            background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png');
+            width: 95%;
+            height: 90vh;
+            padding: 25px;
+            position: relative;
+            box-shadow: 0 0 40px #000;
+            border: 2px solid #d4af37;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+        .close-btn { position: absolute; top: 10px; right: 20px; font-size: 40px; color: #8b0000; cursor: pointer; z-index: 10; }
+        .chapter-title { color: #8b0000; text-align: center; font-size: 1.5em; border-bottom: 1px solid #d4af37; padding-bottom: 15px; margin-bottom: 20px; margin-top: 20px;}
+        .chapter-text { font-size: 1.1em; line-height: 1.7; text-align: justify; color: #222; }
+
+        /* Stile pulsante originale */
+        #originalLink {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 25px;
+            color: #d4af37;
+            border: 1px solid #d4af37;
+            text-decoration: none;
+            font-style: italic;
+            transition: 0.3s;
+        }
+        #originalLink:hover {
+            background: #d4af37;
+            color: #fff;
+        }
+
+        /* AGGIUSTAMENTI PER SCHERMI GRANDI */
+        @media (min-width: 768px) {
+            h1 { font-size: 3.5em; }
+            .scroll-item { height: 180px; }
+            .library-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); padding: 40px; }
+            .modal-content { width: 85%; padding: 50px; }
+            .chapter-title { font-size: 2.2em; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-section">
+        <h1>L'Evangelo</h1>
+        <div class="search-container">
+            <input type="text" id="chapterSearch" placeholder="Capitolo (es. 42 o XLII)" onkeyup="filterChapters()">
+        </div>
+    </div>
+
+    <div class="library-container-frame">
+        <div class="library-grid" id="gridContainer"></div>
+    </div>
+
+    <div class="modal-overlay" id="readerModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle" class="chapter-title"></h2>
+            <div id="modalText" class="chapter-text"></div>
+            <center>
+                <a id="originalLink" href="#" target="_blank">Leggi sul sito originale</a>
+            </center>
+        </div>
+    </div>
+
+    <script src="archivio.js"></script>
+    <script>
+        function toRoman(num) {
+            const roman = { M: 1000, CM: 900, D: 500, CD: 400, C: 100, XC: 90, L: 50, XL: 40, X: 10, IX: 9, V: 5, IV: 4, I: 1 };
+            let str = '';
+            for (let i in roman) { while (num >= roman[i]) { str += i; num -= roman[i]; } }
+            return str;
+        }
+
+        const gridContainer = document.getElementById('gridContainer');
+        for (let i = 1; i <= 652; i++) {
+            const scroll = document.createElement('div');
+            scroll.className = 'scroll-item';
+            const r = toRoman(i);
+            scroll.setAttribute('data-number', i);
+            scroll.setAttribute('data-roman', r);
+            scroll.innerHTML = `<div class="pole"></div><div class="scroll-wrapper"><span class="scroll-number">${r}</span></div><div class="pole"></div>`;
+            scroll.onclick = () => openChapter(i);
+            gridContainer.appendChild(scroll);
+        }
+
+        function filterChapters() {
+            const val = document.getElementById('chapterSearch').value.trim().toUpperCase();
+            const items = document.getElementsByClassName('scroll-item');
+            for (let i = 0; i < items.length; i++) {
+                const a = items[i].getAttribute('data-number');
+                const r = items[i].getAttribute('data-roman');
+                items[i].style.display = (val === "" || a === val || r === val) ? "flex" : "none";
+            }
+        }
+
+        function openChapter(n) {
+            const modalTitle = document.getElementById('modalTitle');
+            const modalText = document.getElementById('modalText');
+            const originalLink = document.getElementById('originalLink');
+            
+            const capitolo = (typeof archivioCapitoli !== 'undefined') ? archivioCapitoli[n] : null;
+
+            if (capitolo) {
+                modalTitle.innerText = toRoman(n) + ". " + capitolo.titolo;
+                modalText.innerHTML = capitolo.testo;
+                
+                if (capitolo.link) {
+                    originalLink.href = capitolo.link;
+                    originalLink.style.display = "inline-block";
+                } else {
+                    originalLink.style.display = "none";
+                }
+            } else {
+                modalTitle.innerText = "Capitolo " + toRoman(n);
+                modalText.innerHTML = `<p style="text-align:center; font-style:italic; margin-top:50px;">Contenuto in fase di caricamento...</p>`;
+                originalLink.style.display = "none";
+            }
+            
+            document.getElementById('readerModal').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('readerModal').style.display = 'none'; }
+        
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('readerModal')) closeModal();
+        }
+    </script>
+</body>
+</html>
