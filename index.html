@@ -30,27 +30,42 @@
             margin-bottom: 20px;
         }
 
-        /* --- BARRA DI RICERCA RESPONSIVE --- */
-        .search-container {
-            margin-bottom: 20px;
-            padding: 0 15px;
+        /* --- BARRA DI RICERCA CON "X" --- */
+        .search-wrapper-outer {
+            position: relative;
+            max-width: 400px;
+            margin: 0 auto 20px;
         }
 
         #chapterSearch {
             background-color: #2a1400;
             border: 2px solid #e5c27a;
             border-radius: 25px;
-            padding: 12px;
+            padding: 12px 45px 12px 15px; /* Spazio a destra per la X */
             color: #e5c27a;
             font-size: 1em;
             width: 100%;
-            max-width: 400px;
             outline: none;
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
             text-align: center;
+            box-sizing: border-box;
         }
 
-        /* --- LA SCAFFALATURA RESPONSIVE --- */
+        .clear-search {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #e5c27a;
+            font-size: 20px;
+            cursor: pointer;
+            display: none; /* Nascondi di base */
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            text-shadow: 0 0 5px #000;
+        }
+
+        /* --- LA SCAFFALATURA --- */
         .library-container-frame {
             max-width: 1200px;
             margin: 0 auto;
@@ -61,13 +76,13 @@
 
         .library-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
-            gap: 25px 10px;
-            padding: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 35px 15px;
+            padding: 25px;
             background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
         }
 
-        /* --- STILE ETZ CHAYIM --- */
+        /* --- STILE ETZ CHAYIM CON APERTURA DINAMICA --- */
         .scroll-item {
             position: relative;
             height: 140px;
@@ -75,14 +90,15 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: transform 0.3s ease;
             filter: drop-shadow(0 5px 5px rgba(0,0,0,0.7));
-            gap: 0;
+            z-index: 1;
         }
 
-        .scroll-item:hover {
-            gap: 8px;
-            transform: scale(1.05);
+        /* Effetto apertura al passaggio del mouse o tocco */
+        .scroll-item:hover, .scroll-item:active {
+            transform: scale(1.1);
+            z-index: 10;
         }
 
         .pole {
@@ -90,6 +106,9 @@
             height: 100%;
             background: linear-gradient(to right, #2a1400, #8b4513, #5c3a21, #2a1400);
             position: relative;
+            flex-shrink: 0;
+            z-index: 3;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .pole::before, .pole::after {
@@ -106,29 +125,38 @@
         .pole::after { bottom: -8px; }
 
         .scroll-wrapper {
-            flex-grow: 0;
-            width: 35px;
-            height: 70%;
+            min-width: 50px; 
+            height: 75%;
             background-color: #e3d3b8;
             background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png');
-            box-shadow: inset 5px 0 7px -3px rgba(0,0,0,0.5), inset -5px 0 7px -3px rgba(0,0,0,0.5);
+            box-shadow: inset 8px 0 8px -5px rgba(0,0,0,0.4), inset -8px 0 8px -5px rgba(0,0,0,0.4);
             display: flex;
             justify-content: center;
             align-items: center;
             border-top: 1px solid #5c3a21;
             border-bottom: 1px solid #5c3a21;
-            transition: all 0.3s;
-            overflow: hidden;
+            margin: 0 -2px;
+            padding: 0 12px;
+            z-index: 2;
+            transition: all 0.4s ease; /* Transizione fluida apertura */
+        }
+
+        /* LOGICA DI APERTURA: i pali si allontanano e la carta si espande */
+        .scroll-item:hover .scroll-wrapper {
+            min-width: 90px;
+            padding: 0 15px;
         }
 
         .scroll-number {
-            font-size: 0.9em;
+            font-size: 0.85em;
             font-weight: bold;
             color: #3d1f00;
-            font-family: serif;
+            font-family: 'Times New Roman', serif;
+            white-space: nowrap;
+            text-align: center;
         }
 
-        /* --- FINESTRA DI LETTURA RESPONSIVE --- */
+        /* --- FINESTRA DI LETTURA --- */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -152,9 +180,8 @@
         }
         .close-btn { position: absolute; top: 10px; right: 20px; font-size: 40px; color: #8b0000; cursor: pointer; z-index: 10; }
         .chapter-title { color: #8b0000; text-align: center; font-size: 1.5em; border-bottom: 1px solid #d4af37; padding-bottom: 15px; margin-bottom: 20px; margin-top: 20px;}
-        .chapter-text { font-size: 1.1em; line-height: 1.7; text-align: justify; color: #222; }
+        .chapter-text { font-size: 1.15em; line-height: 1.7; text-align: justify; color: #222; }
 
-        /* Stile pulsante originale */
         #originalLink {
             display: inline-block;
             margin-top: 30px;
@@ -163,20 +190,15 @@
             border: 1px solid #d4af37;
             text-decoration: none;
             font-style: italic;
-            transition: 0.3s;
-        }
-        #originalLink:hover {
-            background: #d4af37;
-            color: #fff;
         }
 
-        /* AGGIUSTAMENTI PER SCHERMI GRANDI */
         @media (min-width: 768px) {
             h1 { font-size: 3.5em; }
-            .scroll-item { height: 180px; }
-            .library-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); padding: 40px; }
+            .scroll-item { height: 170px; }
+            .library-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); padding: 40px; }
             .modal-content { width: 85%; padding: 50px; }
-            .chapter-title { font-size: 2.2em; }
+            .scroll-number { font-size: 1em; }
+            .scroll-item:hover .scroll-wrapper { min-width: 110px; }
         }
     </style>
 </head>
@@ -184,8 +206,9 @@
 
     <div class="header-section">
         <h1>L'Evangelo</h1>
-        <div class="search-container">
-            <input type="text" id="chapterSearch" placeholder="Capitolo (es. 42 o XLII)" onkeyup="filterChapters()">
+        <div class="search-wrapper-outer">
+            <input type="text" id="chapterSearch" placeholder="Cerca nr. capitolo" onkeyup="filterChapters()">
+            <span class="clear-search" id="clearBtn" onclick="clearSearch()">&times;</span>
         </div>
     </div>
 
@@ -198,9 +221,7 @@
             <span class="close-btn" onclick="closeModal()">&times;</span>
             <h2 id="modalTitle" class="chapter-title"></h2>
             <div id="modalText" class="chapter-text"></div>
-            <center>
-                <a id="originalLink" href="#" target="_blank">Leggi sul sito originale</a>
-            </center>
+            <center><a id="originalLink" href="#" target="_blank">Leggi sul sito originale</a></center>
         </div>
     </div>
 
@@ -226,7 +247,13 @@
         }
 
         function filterChapters() {
-            const val = document.getElementById('chapterSearch').value.trim().toUpperCase();
+            const input = document.getElementById('chapterSearch');
+            const btn = document.getElementById('clearBtn');
+            const val = input.value.trim().toUpperCase();
+            
+            // Mostra/nascondi tasto X
+            btn.style.display = (val.length > 0) ? "block" : "none";
+
             const items = document.getElementsByClassName('scroll-item');
             for (let i = 0; i < items.length; i++) {
                 const a = items[i].getAttribute('data-number');
@@ -235,37 +262,23 @@
             }
         }
 
-        function openChapter(n) {
-            const modalTitle = document.getElementById('modalTitle');
-            const modalText = document.getElementById('modalText');
-            const originalLink = document.getElementById('originalLink');
-            
-            const capitolo = (typeof archivioCapitoli !== 'undefined') ? archivioCapitoli[n] : null;
+        function clearSearch() {
+            document.getElementById('chapterSearch').value = "";
+            filterChapters();
+            document.getElementById('chapterSearch').focus();
+        }
 
-            if (capitolo) {
-                modalTitle.innerText = toRoman(n) + ". " + capitolo.titolo;
-                modalText.innerHTML = capitolo.testo;
-                
-                if (capitolo.link) {
-                    originalLink.href = capitolo.link;
-                    originalLink.style.display = "inline-block";
-                } else {
-                    originalLink.style.display = "none";
-                }
-            } else {
-                modalTitle.innerText = "Capitolo " + toRoman(n);
-                modalText.innerHTML = `<p style="text-align:center; font-style:italic; margin-top:50px;">Contenuto in fase di caricamento...</p>`;
-                originalLink.style.display = "none";
-            }
-            
+        function openChapter(n) {
+            const capitolo = (typeof archivioCapitoli !== 'undefined') ? archivioCapitoli[n] : null;
+            document.getElementById('modalTitle').innerText = toRoman(n) + (capitolo ? ". " + capitolo.titolo : "");
+            document.getElementById('modalText').innerHTML = capitolo ? capitolo.testo : "Contenuto in caricamento...";
+            const link = document.getElementById('originalLink');
+            if(capitolo && capitolo.link) { link.href = capitolo.link; link.style.display="inline-block"; } else { link.style.display="none"; }
             document.getElementById('readerModal').style.display = 'flex';
         }
 
         function closeModal() { document.getElementById('readerModal').style.display = 'none'; }
-        
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('readerModal')) closeModal();
-        }
+        window.onclick = (e) => { if (e.target.id == 'readerModal') closeModal(); }
     </script>
 </body>
 </html>
